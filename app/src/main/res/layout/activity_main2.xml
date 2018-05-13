@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/main_relativeLayout"
+    android:background="@mipmap/main_bg">
+
+
+    <RelativeLayout
+        android:id="@+id/icon_title_relativelayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/main_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="7dp"
+            android:layout_marginTop="7dp"
+            android:background="@mipmap/icon_plice" />
+
+        <TextView
+            android:id="@+id/title_icon_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="58dp"
+            android:layout_marginTop="24dp"
+            android:text="便携式移动哨位台"
+            android:textColor="@color/white"
+            android:textSize="11sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/title_icon_text"
+            android:layout_marginLeft="58dp"
+            android:layout_marginTop="5dp"
+            android:text="Portable mobile sentry station"
+            android:textColor="@color/white"
+            android:textSize="6sp"
+
+            />
+
+        <TextView
+            android:id="@+id/main_incon_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="453dp"
+            android:layout_marginTop="25dp"
+            android:gravity="center"
+            android:paddingTop="0dp"
+            android:text="00:00:00"
+            android:textColor="@color/white"
+            android:textSize="33sp" />
+
+        <TextView
+            android:id="@+id/main_icon_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="-30dp"
+            android:layout_marginTop="25dp"
+            android:layout_toRightOf="@+id/main_incon_time"
+            android:text="3月2日 星期二"
+            android:textColor="@color/white"
+            android:textSize="6sp" />
+
+
+        <ImageButton
+            android:id="@+id/button_intercom"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="93dp"
+            android:layout_marginTop="72dp"
+            android:background="@drawable/intercom_btn_select" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/button_intercom"
+            android:layout_marginLeft="133dp"
+            android:layout_marginTop="6dp"
+            android:gravity="center"
+            android:text="对讲"
+            android:textSize="12sp"
+            android:textColor="@color/white" />
+
+        <ImageButton
+            android:id="@+id/button_video"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="93dp"
+            android:layout_marginTop="206dp"
+            android:background="@drawable/video_btn_select" />
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/button_video"
+            android:layout_marginLeft="133dp"
+            android:layout_marginTop="6dp"
+            android:gravity="center"
+            android:text="视频"
+            android:textSize="12sp"
+            android:textColor="@color/white" />
+
+        <ImageButton
+            android:id="@+id/button_phone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="266dp"
+            android:layout_marginTop="72dp"
+            android:background="@drawable/phone_btn_select" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/button_phone"
+            android:layout_marginLeft="306dp"
+            android:layout_marginTop="6dp"
+            android:gravity="center"
+            android:text="电话"
+            android:textSize="12sp"
+            android:textColor="@color/white" />
+
+
+        <ImageButton
+            android:id="@+id/button_alarm"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="66dp"
+            android:layout_marginTop="206dp"
+            android:layout_toRightOf="@+id/button_video"
+            android:background="@drawable/alarm_btn_select" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/button_alarm"
+            android:layout_marginLeft="306dp"
+            android:layout_marginTop="6dp"
+            android:gravity="center"
+            android:text="警报"
+            android:textSize="12sp"
+            android:textColor="@color/white" />
+
+
+        <ImageButton
+            android:id="@+id/button_setup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="440dp"
+            android:layout_marginTop="72dp"
+            android:background="@drawable/setup_btn_select" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/button_setup"
+            android:layout_marginLeft="470dp"
+            android:layout_marginTop="6dp"
+            android:gravity="center"
+            android:text="设置"
+            android:textSize="12sp"
+            android:textColor="@color/white" />
+
+
+        <ImageButton
+            android:id="@+id/button_applyforplay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="440dp"
+            android:layout_marginTop="206dp"
+            android:background="@drawable/applyforplay_btn_select" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/button_applyforplay"
+            android:layout_marginLeft="470dp"
+            android:layout_marginTop="6dp"
+            android:gravity="center"
+            android:text="申请换弹"
+            android:textSize="12sp"
+            android:textColor="@color/white" />
+
+
+    </RelativeLayout>
+
+
+</RelativeLayout>

@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent"
+	android:orientation="vertical" >
+
+	<LinearLayout
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:orientation="horizontal" >
+
+		<LinearLayout
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:layout_weight="1"
+			android:gravity="left"
+			android:orientation="horizontal" >
+
+
+		</LinearLayout>
+
+		<LinearLayout
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_weight="0"
+			android:gravity="right"
+			android:orientation="horizontal"
+			android:paddingLeft="10dip"
+			android:paddingRight="10dip"
+			android:paddingTop="10dip" >
+
+			<Button
+				android:id="@+id/settings_button"
+				android:layout_width="48dp"
+				android:layout_height="48dp"
+				android:background="@drawable/ic_menu_preferences" />
+		</LinearLayout>
+	</LinearLayout>
+
+	<LinearLayout
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:orientation="vertical"
+		android:paddingLeft="5dip"
+		android:paddingRight="5dip" >
+
+		<LinearLayout
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:orientation="vertical"
+			android:padding="5dip" >
+
+			<TextView
+				android:id="@+id/tv"
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:text="1111111111111"
+				/>
+
+			<Button
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:onClick="receivecall"
+				android:text="receivecall"
+				/>
+
+			<Button
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:onClick="hangup"
+				android:text="hangup"
+				/>
+
+		</LinearLayout>
+	</LinearLayout>
+
+	<LinearLayout
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent"
+		android:background="#736f6e"
+		android:orientation="vertical" >
+
+		<Button
+			android:id="@+id/register"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:layout_gravity="center_vertical"
+			android:gravity="center"
+			android:text="register" />
+
+		<Button
+			android:id="@+id/makecall"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:layout_gravity="center_vertical"
+			android:gravity="center"
+			android:text="makecall" />
+
+
+	</LinearLayout>
+
+</LinearLayout>
