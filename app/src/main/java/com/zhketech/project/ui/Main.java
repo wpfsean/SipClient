@@ -6,15 +6,11 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.Message;
 import android.os.Vibrator;
-import android.preference.PreferenceManager;
-import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -28,37 +24,24 @@ import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
-import com.google.gson.Gson;
-import com.zhketech.project.bean.AlarmBen;
-import com.zhketech.project.bean.SipBean;
-import com.zhketech.project.bean.VideoBen;
-import com.zhketech.project.callback.ReceiveServerMess;
-import com.zhketech.project.callback.ReceiverServerAlarm;
-import com.zhketech.project.callback.RequestVideoSourcesThread;
-import com.zhketech.project.callback.SipRequestCallback;
+
 import com.zhketech.project.global.Constant;
 import com.zhketech.sipclient.R;
 import com.zhketech.sipclient.ui.Receiver;
 import com.zhketech.sipclient.ui.Sipdroid;
 import com.zkketech.project.utils.ByteUtils;
 import com.zkketech.project.utils.Logutils;
-import com.zkketech.project.utils.SharedPreferencesUtils;
+
 import org.sipdroid.sipua.phone.Call;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.Socket;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import kr.co.namee.permissiongen.PermissionFail;
-import kr.co.namee.permissiongen.PermissionGen;
-import kr.co.namee.permissiongen.PermissionSuccess;
 
 public class Main extends AppCompatActivity implements View.OnClickListener {
 
@@ -97,11 +80,6 @@ public class Main extends AppCompatActivity implements View.OnClickListener {
     Vibrator mVibrator = null;
     Context mContext = null;
 
-    List<String> phoneInforList = null;//存放设置状态
-    List<VideoBen> listResources = null;
-    List<SipBean> sipListResources = null;
-    PhoneCallStatus mPhoneCallStatus = null;
-
 
 
     String[] permissions = new String[]{
@@ -117,60 +95,7 @@ public class Main extends AppCompatActivity implements View.OnClickListener {
     };
     List<String> mPermissionList = new ArrayList<>();
 
-
-    /**
-     * 接收子线程发来的消息
-     */
-    private Handler handler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-
-            switch (msg.what) {
-                case 1:
-                    final String mes = (String) msg.obj;
-                    Logutils.i("sms：" + mes);
-                    initAlerdialog(mes, null);
-                    break;
-                case 2:
-                    AlarmBen alarmBen = (AlarmBen) msg.obj;
-                    Logutils.i("alarm:" + alarmBen.toString());
-                    if (alarmBen != null) initAlerdialog("", alarmBen);
-                    else Logutils.i("数据失败");
-                    break;
-                case 3:
-                    long time = System.currentTimeMillis();
-                    Date date = new Date(time);
-                    SimpleDateFormat timeD = new SimpleDateFormat("HH:mm:ss");
-                    main_incon_time.setText(timeD.format(date));
-                    SimpleDateFormat dateD = new SimpleDateFormat("MM月dd日 EEE");
-                    main_icon_date.setText(dateD.format(date));
-                    break;
-                case 4:
-                    //获取视频资源
-                    List<VideoBen> mList = (List<VideoBen>) msg.obj;
-                    if (mList.size() > 0) {
-                        listResources = mList;
-                    }
-                    Gson gson = new Gson();
-                    String json = gson.toJson(listResources);
-                    Logutils.i("video:" + json);
-                    if (json != null && !TextUtils.isEmpty(json))
-                        SharedPreferencesUtils.putObject(mContext, "result", json);
-                    break;
-
-                case 5:
-                    //获取sip资源列表
-                    List<SipBean> sipBeansList = (List<SipBean>) msg.obj;
-                    if (sipBeansList != null && sipBeansList.size() > 0){
-                        Logutils.i(TAG+""+sipBeansList.toString());
-                    }
-
-
-                    break;
-            }
-        }
-    };
-
+    IncomingStatus phoneStatus;
 
 
     @Override
@@ -179,7 +104,7 @@ public class Main extends AppCompatActivity implements View.OnClickListener {
         Logutils.i(TAG+":"+"onCreate");
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        hideAll();
+        hideTitleStatus();
         setContentView(R.layout.activity_main2);
         ButterKnife.bind(this);
         mContext = this;
@@ -195,43 +120,12 @@ public class Main extends AppCompatActivity implements View.OnClickListener {
     }
 
     private void initListern() {
-        mPhoneCallStatus = new PhoneCallStatus();
+        phoneStatus = new IncomingStatus();
         IntentFilter intentFilter = new IntentFilter("com.zhketech.sipphone");
-        this.registerReceiver(mPhoneCallStatus, intentFilter);
-        Receiver.engine(this).registerMore();
-        phoneInforList = new ArrayList<String>();
+        this.registerReceiver(phoneStatus, intentFilter);
     }
 
-    /**
-     * 接收到短消息时弹出dialog
-     *
-     * @param ms 短消息
-     */
-    public void initAlerdialog(final String ms, final AlarmBen alarmBen) {
 
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-                if (ms != null && !TextUtils.isEmpty(ms) && alarmBen == null)
-                    builder.setTitle("短消息：").setMessage(ms).setNegativeButton("Cancal", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            dialogInterface.dismiss();
-                        }
-                    });
-                else if (alarmBen != null && TextUtils.isEmpty(ms))
-                    builder.setTitle("报警报文:").setMessage(alarmBen.toString()).setNegativeButton("Cancal", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            dialogInterface.dismiss();
-                        }
-                    });
-                ;
-                builder.create().show();
-            }
-        });
-    }
 
     /**
      * 初始化控件
@@ -249,79 +143,19 @@ public class Main extends AppCompatActivity implements View.OnClickListener {
     @Override
     protected void onResume() {
         super.onResume();
-        hideAll();
+        hideTitleStatus();
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        /**
-         * 启动线程接收服务器发送过来的数据
-         */
-        ReceiveServerMess receiveServerMess = new ReceiveServerMess(new ReceiveServerMess.GetMessageListern() {
-            @Override
-            public void getMess(String ms) {
-                Message smsMess = new Message();
-                smsMess.what = 1;
-                if (!TextUtils.isEmpty(ms) && !ms.equals("fail"))
-                    smsMess.obj = ms;
-                handler.sendMessage(smsMess);
-            }
-        });
-        new Thread(receiveServerMess).start();
 
-        /**
-         * 回调获取服务器端发来的报警报文
-         */
-        ReceiverServerAlarm receiverServerAlarm = new ReceiverServerAlarm(new ReceiverServerAlarm.GetAlarmFromServerListern() {
-            @Override
-            public void getListern(AlarmBen alarmBen, String flage) {
-                Message alarmMess = new Message();
-                alarmMess.what = 2;
-                if (flage.equals("success"))
-                    alarmMess.obj = alarmBen;
-                else
-                    alarmMess.obj = null;
-                handler.sendMessage(alarmMess);
-            }
-        });
-        new Thread(receiverServerAlarm).start();
-
-        /**
-         * 获取Video资源列表
-         */
-        RequestVideoSourcesThread requestVideoSourcesThread = new RequestVideoSourcesThread(new RequestVideoSourcesThread.GetDataListener() {
-            @Override
-            public void getResult(List<VideoBen> devices) {
-                Message message = new Message();
-                message.what = 4;
-                message.obj = devices;
-                handler.sendMessage(message);
-            }
-        });
-        new Thread(requestVideoSourcesThread).start();
-
-        /**
-         * 获取Sip资源列表
-         */
-        SipRequestCallback sipRequestCallback = new SipRequestCallback(new SipRequestCallback.SipListern() {
-            @Override
-            public void getDataListern(List<SipBean> mList) {
-                Message message = new Message();
-                message.what = 5;
-                message.obj = mList;
-                handler.sendMessage(message);
-            }
-        });
-        new Thread(sipRequestCallback).start();
-
-        //sstartService(new Intent(this, SendheartService.class));
     }
 
     /**
      * 隐藏状态栏和actionBar
      */
-    protected void hideAll() {
+    protected void hideTitleStatus() {
         if (getSupportActionBar() != null) getSupportActionBar().hide();
         if (Build.VERSION.SDK_INT > 11 && Build.VERSION.SDK_INT < 19) { // lower api
             View v = this.getWindow().getDecorView();
@@ -338,7 +172,7 @@ public class Main extends AppCompatActivity implements View.OnClickListener {
     @Override
     protected void onRestart() {
         super.onRestart();
-        hideAll();
+        hideTitleStatus();
 
     }
 
@@ -346,20 +180,17 @@ public class Main extends AppCompatActivity implements View.OnClickListener {
     protected void onDestroy() {
         super.onDestroy();
       //  this.stopService(new Intent(this, SendheartService.class));
-        this.unregisterReceiver(mPhoneCallStatus);
+        this.unregisterReceiver(phoneStatus);
         Receiver.engine(this).halt();
         Receiver.engine(this).UpdateLines();
         Receiver.engine(this).StartEngine();
-        mVibrator = null;
-        phoneInforList.clear();
-        phoneInforList = null;
         System.gc();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        hideAll();
+        hideTitleStatus();
     }
 
     @Override
@@ -373,13 +204,7 @@ public class Main extends AppCompatActivity implements View.OnClickListener {
                 mVibrator.vibrate(200);
                 break;
 //            case R.id.button_phone:
-//
-//                mVibrator.vibrate(200);
-//                break;
-//            case R.id.button_setup:
-//                intent.setClass(mContext, SettingActivity.class);
-//                mContext.startActivity(intent);
-//                mVibrator.vibrate(200);
+
 //                break;
             case R.id.button_video:
                 //视频
@@ -389,21 +214,11 @@ public class Main extends AppCompatActivity implements View.OnClickListener {
                 mVibrator.vibrate(200);
                 break;
 //            case R.id.button_alarm:
-//                //报警
-//                intent.setClass(mContext, AlarmActivity.class);
-//                mContext.startActivity(intent);
-//                mVibrator.vibrate(200);
+
 //                break;
             case R.id.button_applyforplay:
                 //申请供弹
                 mVibrator.vibrate(200);
-                requestBombosMethod();
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(mContext, "申请已发出!", Toast.LENGTH_SHORT).show();
-                    }
-                }, 2 * 1000);
 
                 break;
         }
@@ -486,7 +301,6 @@ public class Main extends AppCompatActivity implements View.OnClickListener {
                     Thread.sleep(1000);
                     Message msg = new Message();
                     msg.what = 3;
-                    handler.sendMessage(msg);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -499,7 +313,7 @@ public class Main extends AppCompatActivity implements View.OnClickListener {
     /**
      * 来电状态处理
      */
-    class PhoneCallStatus extends BroadcastReceiver {
+    class IncomingStatus extends BroadcastReceiver {
         @Override
         public void onReceive(final Context context, final Intent intent) {
             String status = intent.getStringExtra("msg");
@@ -508,7 +322,7 @@ public class Main extends AppCompatActivity implements View.OnClickListener {
                 switch (status) {
                     case "UA_STATE_INCOMING_CALL":
 
-                        initDialog(caller);
+
                         break;
                     case "UA_STATE_INCALL":
 
@@ -532,7 +346,7 @@ public class Main extends AppCompatActivity implements View.OnClickListener {
      * 显示个提示框
      * @param caller
      */
-    private synchronized void initDialog(String caller) {
+    private  void initDialog(String caller) {
         AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
         builder.setTitle("来电话").setMessage(caller).setPositiveButton("Answer", new DialogInterface.OnClickListener() {
             @Override
@@ -613,8 +427,6 @@ public class Main extends AppCompatActivity implements View.OnClickListener {
         Log.i("TAG", "do something");
         TimeThread timeThread = new TimeThread();
         new Thread(timeThread).start();
-        listResources = new ArrayList<>();
-        sipListResources = new ArrayList<>();
         mVibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
     }
 }
