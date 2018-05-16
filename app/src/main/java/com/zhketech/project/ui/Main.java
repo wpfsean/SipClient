@@ -83,9 +83,9 @@ public class Main extends AppCompatActivity implements View.OnClickListener {
 
 
     String[] permissions = new String[]{
+            Manifest.permission.USE_SIP,
             Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.CAMERA,
-            Manifest.permission.USE_SIP,
             Manifest.permission.READ_CALL_LOG,
             Manifest.permission.WRITE_CALL_LOG,
             Manifest.permission.READ_PHONE_STATE,
@@ -318,9 +318,11 @@ public class Main extends AppCompatActivity implements View.OnClickListener {
         public void onReceive(final Context context, final Intent intent) {
             String status = intent.getStringExtra("msg");
             String caller = intent.getStringExtra("caller");
+            Logutils.i("Main.Caller:"+caller);
             if (status != null && !TextUtils.isEmpty(status)) {
                 switch (status) {
                     case "UA_STATE_INCOMING_CALL":
+
 
 
                         break;

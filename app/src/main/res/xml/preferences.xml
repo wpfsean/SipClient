@@ -5,8 +5,8 @@
 		android:title="@string/settings_account" >
         	<intent
                 	android:action="android.intent.action.MAIN"
-	                android:targetPackage="org.sipdroid.sipua"
-	                android:targetClass="org.sipdroid.sipua.ui.AccountSettings" />
+	                android:targetPackage="com.zhketech.sipclient"
+	                android:targetClass="com.zhketech.sipclient.ui.AccountSettings" />
 
 	</PreferenceScreen>
 	<PreferenceScreen android:title="@string/settings_options">
@@ -51,7 +51,7 @@
 				android:key="nodata"
 				android:title="@string/settings_nodata"
 				android:summary="@string/settings_nodata2" />
-			<org.sipdroid.sipua.ui.SipRingtonePreference
+			<com.zhketech.sipclient.ui.SipRingtonePreference
 				android:key="sipringtone"
 				android:title="@string/settings_sipringtone"
 				android:summary="@string/settings_sipringtone2"
@@ -101,8 +101,8 @@
 		android:title="@string/codecs" >
         	<intent
                 	android:action="android.intent.action.MAIN"
-	                android:targetPackage="org.sipdroid.sipua"
-	                android:targetClass="org.sipdroid.codecs.Codecs$CodecSettings" />
+	                android:targetPackage="com.zhketech.sipclient"
+	                android:targetClass="com.zhketech.sipclient.codecs.Codecs$CodecSettings" />
 
 	</PreferenceScreen>
 	<PreferenceScreen android:title="@string/settings_advanced_options">

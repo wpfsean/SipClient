@@ -92,7 +92,7 @@ public class Sipdroid extends Activity {
 					public void run() {
 						// Receiver.engine(this).call(target, true)
 
-						Receiver.engine(Sipdroid.this).call("2@192.168.0.16",
+						Receiver.engine(Sipdroid.this).call("5@192.168.0.16",
 								true);
 
 					}
@@ -124,8 +124,8 @@ public class Sipdroid extends Activity {
 						PreferenceManager
 								.getDefaultSharedPreferences(Receiver.mContext)
 								.edit()
-								.putString(Settings.PREF_USERNAME, "5")
-								.putString(Settings.PREF_PASSWORD, "5")
+								.putString(Settings.PREF_USERNAME, "1")
+								.putString(Settings.PREF_PASSWORD, "1")
 								.putString(Settings.PREF_SERVER, "192.168.0.16")
 								.putString(Settings.PREF_DOMAIN, "")
 								.putString(Settings.PREF_PORT, "5060")
